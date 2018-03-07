@@ -4,13 +4,6 @@ require 'json'
 require 'sqlite3'
 require 'pry'
 
-# HAHA FUCK YOU RUBY
-class Float
-  def self.round(amount)
-    sprintf("%.#{amount}f", self)
-  end
-end
-
 def normalize_date(date)
   Time.new(*date.split('-')).to_i
 end
@@ -90,24 +83,30 @@ loop do
   when /^s (.*)/
     symbols << Regexp.last_match(1).split
     threads << Thread.new { grab_rates(origin, symbols) }
-  when /^(\d+\.*\d*) ([a-zA-Z]{3}) (.*)/
+  when /^(\d+\.?\d*)\s?([a-zA-Z]{3})?\s?(.*)/
     value  = Regexp.last_match(1)
     symbol = Regexp.last_match(2)
     symbol.upcase! if symbol
     desc   = Regexp.last_match(3)
 
-    grab_rates(origin, [symbol]) unless symbol && symbols.include?(symbol)
+    grab_rates(origin, [symbol]) unless symbol.nil? || (symbols+[origin]).include?(symbol)
     ratio = symbol ? DB.execute("select value from rates where base=? AND symbol=?", origin, symbol).flatten[0].to_f : 1
     converted = value.to_i/ratio
+    binding.pry
+    next if converted == Float::INFINITY
     DB.execute("insert into line_items(real_value, converted_value, description, base, symbol, ratio, timestamp)"\
-               " values(?, ?, ?, ?, ?, ?, ?)", value, converted, desc, origin, symbol, ratio, Time.now.to_i)
-    puts "Captured for #{converted.round(2)} #{origin}."
+               " values(?, ?, ?, ?, ?, ?, ?)", value, converted, desc, origin, symbol || origin, ratio, Time.now.to_i)
+    puts "Captured for #{sprintf("%.2f", converted)} #{origin}."
   when 'y'
     puts year
   when /^y (\d+)/
     year = Regexp.last_match(1)
   when 't'
-    # show totals for year
+    # records = DB.execute("select real_value, converted_value, description, base, symbol"\
+    #                      " from line_items"\
+    #                      " where strftime('%Y', line_items.timestamp) = 2018").flatten
+    # records.inject {|sum, n| sum + n.converted_value }
+    # puts records.inject {|sum, n| sum + n.converted_value }
   when '/^t (\d+)'
     # show totals for month
   when 'exit'
