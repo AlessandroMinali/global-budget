@@ -91,9 +91,10 @@ loop do
 
     grab_rates(origin, [symbol]) unless symbol.nil? || (symbols+[origin]).include?(symbol)
     ratio = symbol ? DB.execute("select value from rates where base=? AND symbol=?", origin, symbol).flatten[0].to_f : 1
-    converted = value.to_i/ratio
-    binding.pry
+    converted = value.to_f/ratio
+
     next if converted == Float::INFINITY
+
     DB.execute("insert into line_items(real_value, converted_value, description, base, symbol, ratio, timestamp)"\
                " values(?, ?, ?, ?, ?, ?, ?)", value, converted, desc, origin, symbol || origin, ratio, Time.now.to_i)
     puts "Captured for #{sprintf("%.2f", converted)} #{origin}."
@@ -102,11 +103,10 @@ loop do
   when /^y (\d+)/
     year = Regexp.last_match(1)
   when 't'
-    # records = DB.execute("select real_value, converted_value, description, base, symbol"\
-    #                      " from line_items"\
-    #                      " where strftime('%Y', line_items.timestamp) = 2018").flatten
-    # records.inject {|sum, n| sum + n.converted_value }
-    # puts records.inject {|sum, n| sum + n.converted_value }
+    records = DB.execute("select real_value, converted_value, description, base, symbol"\
+                         " from line_items"\
+                         " where strftime('%Y', datetime(timestamp, 'unixepoch')) = strftime('%Y', 'now')")
+    puts records.inject(0) {|sum, record| sum + record[1] }
   when '/^t (\d+)'
     # show totals for month
   when 'exit'
