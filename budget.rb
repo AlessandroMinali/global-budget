@@ -106,7 +106,7 @@ loop do
     records = DB.execute("select real_value, converted_value, description, base, symbol"\
                          " from line_items"\
                          " where strftime('%Y', datetime(timestamp, 'unixepoch')) = strftime('%Y', 'now')")
-    puts records.inject(0) {|sum, record| sum + record[1] }
+    puts "#{Time.now.year} TOTAL: #{records.inject(0) {|sum, record| sum + record[1] }} #{origin}"
   when '/^t (\d+)'
     # show totals for month
   when 'exit'
