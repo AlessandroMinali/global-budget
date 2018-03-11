@@ -1,5 +1,7 @@
 Record personal payments at home and overseas with ease.
 
+###### Warning: API that this depends on will be deprecated at some unkown point in the future, [2018 announcement](https://github.com/fixerAPI/fixer)
+
 # Setup
 `gem install sqlite3`
 
@@ -10,7 +12,7 @@ Record personal payments at home and overseas with ease.
 Usage:
 	b				- Inspect base currency
 	b (\w{3})			- Set base curreny
-	s				- Inspect avaiable conversion targets
+	s				- Inspect available conversion targets
 	s (\w{3}\ ?\w{3}?)*		- Add conversion targets
 	r				- Inspect all stored rates
 	<VALUE> <CURRENCY> <NOTE>	- Add item:
@@ -22,4 +24,4 @@ Usage:
 	t				- Calculate totals for year
 	t (.+)				- Calculate totals for month in year
 	exit
-```
+```#
