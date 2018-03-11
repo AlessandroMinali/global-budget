@@ -13,7 +13,7 @@ Usage:
 	b				- Inspect base currency
 	b (\w{3})			- Set base curreny
 	s				- Inspect available conversion targets
-	s (\w{3}\ ?\w{3}?)*		- Add conversion targets
+	s (\w{3}\ ?\w{3}?)+		- Add conversion targets
 	r				- Inspect all stored rates
 	<VALUE> <CURRENCY> <NOTE>	- Add item:
 					  <VALUE> required

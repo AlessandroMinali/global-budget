@@ -75,7 +75,7 @@ loop do
     grab_rates(origin.upcase!, symbols)
   when 's'
     puts symbols
-  when /^s (\w{3}\ ?\w{3}?)*\z/
+  when /^s (\w{3}\ ?\w{3}?)+\z/
     symbols += Regexp.last_match(1).split.map(&:upcase!)
     grab_rates(origin, symbols)
   when /^(\+?)(\d+\.?\d*)(\ [a-zA-Z]{3})?(\ .*)?\z/
@@ -156,7 +156,7 @@ loop do
     puts "\tb\t\t\t\t- Inspect base currency"
     puts "\tb (\\w{3})\t\t\t- Set base curreny"
     puts "\ts\t\t\t\t- Inspect avaiable conversion targets"
-    puts "\ts (\\w{3}\\ ?\\w{3}?)*\t\t- Add conversion targets"
+    puts "\ts (\\w{3}\\ ?\\w{3}?)+\t\t- Add conversion targets"
     puts "\tr\t\t\t\t- Inspect all stored rates"
     puts "\t<VALUE> <CURRENCY> <NOTE>\t- Add item:"
     puts "\t\t\t\t\t  <VALUE> required"
