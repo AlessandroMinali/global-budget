@@ -24,4 +24,4 @@ Usage:
 	t				- Calculate totals for year
 	t (.+)				- Calculate totals for month in year
 	exit
-```#
+```
