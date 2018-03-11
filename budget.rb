@@ -3,7 +3,6 @@
 require 'net/http'
 require 'json'
 require 'sqlite3'
-require 'pry'
 
 def normalize_date(date)
   Time.new(*date.split('-')).to_i
