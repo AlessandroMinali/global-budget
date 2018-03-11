@@ -160,7 +160,7 @@ loop do
     puts "\ts (\\w{3}\\ ?\\w{3}?)*\t\t- Add conversion targets"
     puts "\tr\t\t\t\t- Inspect all stored rates"
     puts "\t<VALUE> <CURRENCY> <NOTE>\t- Add item:"
-    puts "\t\t\t\t\t  <VALUE> required, if begins with '+' will be a deposit"
+    puts "\t\t\t\t\t  <VALUE> required"
     puts "\t\t\t\t\t  <CURRENCY> optional, defaults to base"
     puts "\t\t\t\t\t  <DESCRIPTION> optional"
     puts "\ty\t\t\t\t- Inspect year, used for totals"
