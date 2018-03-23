@@ -86,7 +86,6 @@ loop do
     symbol.upcase! if symbol
     desc = Regexp.last_match(4)&.strip
 
-    binding.pry
     grab_rates(origin, [symbol]) unless symbol.nil? || (symbols + [origin]).include?(symbol)
     ratio = symbol ? DB.execute('select value from rates where base=? AND symbol=?', origin, symbol).flatten[0].to_f : 1
     converted = value.to_f / ratio
