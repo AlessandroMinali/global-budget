@@ -40,7 +40,7 @@ symbols = %w[JPY]
 origin = 'CAD'
 year = Time.now.year
 
-DB = SQLite3::Database.new('budget.sqlite')
+DB = SQLite3::Database.new(File.realpath(__FILE__).rpartition('/').first + '/budget.sqlite')
 
 DB.execute("create table if not exists rates(
   id integer PRIMARY KEY,
