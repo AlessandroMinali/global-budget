@@ -4,6 +4,7 @@
 require 'net/http'
 require 'json'
 require 'sqlite3'
+require 'pry'
 
 def normalize_date(date)
   Time.new(*date.split('-')).to_i
@@ -20,16 +21,21 @@ end
 
 def grab_rates(origin, symbols)
   return unless stale?(origin, symbols)
+  params = symbols.map do |sym|
+    "#{origin}_#{sym}"
+  end.join(",")
 
-  data = JSON.parse(Net::HTTP.get(URI("https://api.fixer.io/latest?symbols=#{symbols}&base=#{origin}")))
-  base = data['base']
+  data = JSON.parse(Net::HTTP.get(URI("http://free.currencyconverterapi.com/api/v5/convert?q=#{params}&compact=y")))
+  base = origin
 
   print "Updated rates for #{origin.upcase}: "
-  data['rates'].each do |k, v|
+  data.each do |k, v|
+    k = k.split("_").last
     print "#{k} "
-    DB.execute('select base, symbol, timestamp from rates where base=? AND symbol=?', base, k)
+
+    DB.execute('delete from rates where base=? AND symbol=?', base, k)
     DB.execute('insert or ignore into rates(base, symbol, value, timestamp) values(?, ?, ?, ?)',
-               base, k, v, normalize_date(data['date']))
+      base, k, v.values.first, Time.now.to_i)
   end
   print "\n"
 end
