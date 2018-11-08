@@ -93,7 +93,7 @@ loop do
     desc = Regexp.last_match(4)&.strip
 
     grab_rates(origin, [symbol]) unless symbol.nil? || (symbols + [origin]).include?(symbol)
-    ratio = symbol ? DB.execute('select value from rates where base=? AND symbol=?', origin, symbol).flatten[-1].to_f : 1
+    ratio = symbol && symbol != origin ? DB.execute('select value from rates where base=? AND symbol=?', origin, symbol).flatten[-1].to_f : 1
     converted = value.to_f / ratio
 
     converted *= -1 if deposit
