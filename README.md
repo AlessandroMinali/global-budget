@@ -1,7 +1,5 @@
 Record personal payments at home and overseas with ease.
 
-###### Warning: API that this depends on will be deprecated at some unkown point in the future, [2018 announcement](https://github.com/fixerAPI/fixer)
-
 # Setup
 `gem install sqlite3`
 

@@ -4,7 +4,11 @@
 require 'net/http'
 require 'json'
 require 'sqlite3'
-require 'pry'
+
+Signal.trap("INT") {
+  puts
+  exit
+}
 
 def normalize_date(date)
   Time.new(*date.split('-')).to_i
@@ -25,7 +29,7 @@ def grab_rates(origin, symbols)
     "#{origin}_#{sym}"
   end.join(",")
 
-  data = JSON.parse(Net::HTTP.get(URI("http://free.currencyconverterapi.com/api/v5/convert?q=#{params}&compact=y")))
+  data = JSON.parse(Net::HTTP.get(URI("http://free.currencyconverterapi.com/api/v5/convert?q=#{params}&compact=y&apiKey=39f2d28216feec9603d9")))
   base = origin
 
   print "Updated rates for #{origin.upcase}: "
@@ -109,7 +113,7 @@ loop do
   when 't'
     records = DB.execute('select timestamp, converted_value, description, base, symbol, ratio'\
                          ' from line_items'\
-                         " where strftime('%Y', datetime(timestamp, 'unixepoch')) = strftime('%Y', 'now')")
+                         " where strftime('%Y', datetime(timestamp, 'unixepoch')) = '#{year}'")
     totals = DB.execute('select base, sum(converted_value) as sub_total'\
                         ' from line_items'\
                         ' group by base')
