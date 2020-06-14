@@ -78,7 +78,7 @@ system 'clear'
 puts "Welcome back!\nFormat expected: <VALUE> <CURRENCY> <DESCRIPTION>"
 loop do
   print '>> '
-  case gets.chomp
+  case ARGV[0] || gets.chomp
   when 'b'
     puts origin
   when /^b (\w{3})\z/
@@ -116,6 +116,7 @@ loop do
                          " where strftime('%Y', datetime(timestamp, 'unixepoch')) = '#{year}'")
     totals = DB.execute('select base, sum(converted_value) as sub_total'\
                         ' from line_items'\
+                        " where strftime('%Y', datetime(timestamp, 'unixepoch')) = '#{year}'"\
                         ' group by base')
     next if records.empty?
 
@@ -136,10 +137,10 @@ loop do
 
     records = DB.execute('select timestamp, converted_value, description, base, symbol, ratio'\
                          ' from line_items'\
-                         " where strftime('%m', datetime(timestamp, 'unixepoch')) = ?",
-                         month.to_s.rjust(2, '0'))
+                         " where strftime('%m', datetime(timestamp, 'unixepoch')) = '#{month.to_s.rjust(2, '0')}' and strftime('%Y', datetime(timestamp, 'unixepoch')) = '#{year}'")
     totals = DB.execute('select base, sum(converted_value) as sub_total'\
                         ' from line_items'\
+                        " where strftime('%m', datetime(timestamp, 'unixepoch')) = '#{month.to_s.rjust(2, '0')}' and strftime('%Y', datetime(timestamp, 'unixepoch')) = '#{year}'"\
                         ' group by base')
     next if records.empty?
 
@@ -152,7 +153,7 @@ loop do
     end
     puts
     totals.each do |total|
-      puts "#{Date::MONTHNAMES[month]} #{total.first} TOTAL: #{format('%.2f', total.last)}"
+      puts "#{year} #{Date::MONTHNAMES[month].upcase} #{total.first} TOTAL: #{format('%.2f', total.last)}"
     end
   when 'r'
     DB.execute('select base, symbol, value from rates').each do |rate|
@@ -178,4 +179,5 @@ loop do
     puts "\tt (.+)\t\t\t\t- Calculate totals for month in year"
     puts "\texit\t\t\t\t"
   end
+  exit if ARGV[0]
 end
